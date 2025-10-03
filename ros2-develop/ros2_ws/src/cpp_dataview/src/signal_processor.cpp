@@ -1,51 +1,52 @@
+
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float32.hpp"
+#include <message_filters/subscriber.h>
+#include <message_filters/sync_policies/approximate_time.h>
+#include <message_filters/synchronizer.h>
+
+using namespace message_filters;
 
 class SignalProcessor : public rclcpp::Node {
 public:
     SignalProcessor() : Node("signal_processor") {
-        // 订阅信号
-        sine_sub_ = this->create_subscription<std_msgs::msg::Float32>(
-            "sine_wave", 10, std::bind(&SignalProcessor::sine_callback, this, std::placeholders::_1));
+        processed_pub_ = this->create_publisher<std_msgs::msg::Float32>("/processed_signal", 10);
         
-        square_sub_ = this->create_subscription<std_msgs::msg::Float32>(
-            "square_wave", 10, std::bind(&SignalProcessor::square_callback, this, std::placeholders::_1));
+        // 创建同步订阅器
+        sine_sub_.subscribe(this, "/sine_wave");
+        square_sub_.subscribe(this, "/square_wave");
         
-        // 创建结果发布者
-        output_pub_ = this->create_publisher<std_msgs::msg::Float32>("processed_signal", 10);
+        // 配置时间同步策略 (10ms容差)
+        sync_.reset(new Sync(ApproxPolicy(10), sine_sub_, square_sub_));
+        sync_->registerCallback(&SignalProcessor::signal_callback, this);
         
         RCLCPP_INFO(this->get_logger(), "信号处理器节点已启动");
     }
 
 private:
-    void sine_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-        latest_sine_ = msg->data;
-        process_signals();
-    }
-
-    void square_callback(const std_msgs::msg::Float32::SharedPtr msg) {
-        latest_square_ = msg->data;
-        process_signals();
-    }
-
-    void process_signals() {
+    void signal_callback(
+        const std_msgs::msg::Float32::ConstSharedPtr& sine_msg,
+        const std_msgs::msg::Float32::ConstSharedPtr& square_msg) {
+        
         auto output_msg = std_msgs::msg::Float32();
         
-        // 同号检测：正弦和方波符号相同
-        if (latest_sine_ * latest_square_ >= 0) {
-            output_msg.data = latest_sine_;
+        // 同号检测逻辑
+        if (sine_msg->data * square_msg->data >= 0) {
+            output_msg.data = sine_msg->data;
         } else {
-            output_msg.data = 0.0;
+            output_msg.data = 0.0f;
         }
         
-        output_pub_->publish(output_msg);
+        processed_pub_->publish(output_msg);
     }
     
-    float latest_sine_ = 0.0;
-    float latest_square_ = 1.0;  // 初始化为正数确保初始同号
-    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr sine_sub_;
-    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr square_sub_;
-    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr output_pub_;
+    typedef sync_policies::ApproximateTime<std_msgs::msg::Float32, std_msgs::msg::Float32> ApproxPolicy;
+    typedef Synchronizer<ApproxPolicy> Sync;
+    std::shared_ptr<Sync> sync_;
+    
+    Subscriber<std_msgs::msg::Float32> sine_sub_;
+    Subscriber<std_msgs::msg::Float32> square_sub_;
+    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr processed_pub_;
 };
 
 int main(int argc, char * argv[]) {
@@ -54,3 +55,4 @@ int main(int argc, char * argv[]) {
     rclcpp::shutdown();
     return 0;
 }
+
