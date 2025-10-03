@@ -1,0 +1,3 @@
+/home/zheng/Alli/week2/game/build/CMakeFiles/game.dir
+/home/zheng/Alli/week2/game/build/CMakeFiles/edit_cache.dir
+/home/zheng/Alli/week2/game/build/CMakeFiles/rebuild_cache.dir
