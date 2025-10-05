@@ -1,82 +1,56 @@
-# This file is used to ignore files which are generated
-# ----------------------------------------------------------------------------
+# 构建目录和输出文件
+build/
+cmake-build-*/
 
-*~
-*.autosave
-*.a
-*.core
-*.moc
+# 可执行文件
+*.exe
+*.out
+*.app
+
+# 对象文件
 *.o
 *.obj
-*.orig
-*.rej
-*.so
-*.so.*
-*_pch.h.cpp
-*_resource.rc
-*.qm
-.#*
-*.*#
-core
-!core/
-tags
-.DS_Store
-.directory
-*.debug
-Makefile*
-*.prl
-*.app
+
+# 依赖文件
+*.d
+
+# CMake生成的文件
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# Qt生成的文件
+*.moc
 moc_*.cpp
+moc_*.h
 ui_*.h
 qrc_*.cpp
+
+# 临时文件
+*.tmp
+*.temp
+*~
+
+# 系统文件
+.DS_Store
 Thumbs.db
-*.res
-*.rc
-/.qmake.cache
-/.qmake.stash
 
-# qtcreator generated files
-*.pro.user*
-*.qbs.user*
-CMakeLists.txt.user*
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# xemacs temporary files
-*.flc
+# 日志文件
+*.log
 
-# Vim temporary files
-.*.swp
+# 测试输出
+test_results/
 
-# Visual Studio generated files
-*.ib_pdb_index
-*.idb
-*.ilk
-*.pdb
-*.sln
-*.suo
-*.vcproj
-*vcproj.*.*.user
-*.ncb
-*.sdf
-*.opensdf
-*.vcxproj
-*vcxproj.*
-
-# MinGW generated files
-*.Debug
-*.Release
-
-# Python byte code
-*.pyc
-
-# Binaries
-# --------
-*.dll
-*.exe
-
-# Directories with generated files
-.moc/
-.obj/
-.pch/
-.rcc/
-.uic/
-/build*/
+# Docker相关
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-build.sh

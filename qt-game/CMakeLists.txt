@@ -15,10 +15,24 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        src/main.cpp
+        src/mainwindow.cpp
+        include/mainwindow.h
+        include/mainwindow.ui
+        src/player.cpp
+        include/player.h
+        src/map.cpp
+        include/map.h
+        src/trap.cpp
+        include/trap.h
+        src/fog.cpp
+        include/fog.h
+        src/solver.cpp
+        include/solver.h
+        src/imageprocessor.cpp
+        include/imageprocessor.h
+        src/game.cpp
+        include/game.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
