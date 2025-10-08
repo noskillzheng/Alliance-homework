@@ -13,14 +13,22 @@ Game::Game(QGraphicsScene* scene, QObject* parent)
     , m_fogMode(false)
     , m_autoSolving(false)
     , m_currentPathIndex(0)
+<<<<<<< HEAD
     , m_currentMapType(MAP1)
 {
     m_gameTimer = new QTimer(this);
     m_collisionTimer = new QTimer(this);
+=======
+{
+    m_gameTimer = new QTimer(this);
+    m_collisionTimer = new QTimer(this);
+    m_trapSpawnTimer = new QTimer(this);
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     m_autoMoveTimer = new QTimer(this);
 
     connect(m_gameTimer, &QTimer::timeout, this, &Game::updateGame);
     connect(m_collisionTimer, &QTimer::timeout, this, &Game::checkCollisions);
+<<<<<<< HEAD
     connect(m_autoMoveTimer, &QTimer::timeout, this, &Game::autoMoveStep);
 
     m_collisionTimer->start(100); // Check collisions every 100ms
@@ -30,22 +38,37 @@ Game::Game(QGraphicsScene* scene, QObject* parent)
     m_trapsVisible = false;
     m_trapGenerationTimer = new QTimer(this);
     connect(m_trapGenerationTimer, &QTimer::timeout, this, &Game::generateTrap);
+=======
+    connect(m_trapSpawnTimer, &QTimer::timeout, this, &Game::spawnRandomTrap);
+    connect(m_autoMoveTimer, &QTimer::timeout, this, &Game::autoMoveStep);
+
+    m_collisionTimer->start(100); // Check collisions every 100ms
+    m_trapSpawnTimer->start(3000); // Spawn trap every 3 seconds
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
     m_solver = new Solver();
 }
 
 Game::~Game()
 {
+<<<<<<< HEAD
+=======
+    clearTraps();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     delete m_player;
     delete m_map;
     delete m_fog;
     delete m_solver;
+<<<<<<< HEAD
     clearAllTraps();
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 }
 
 void Game::startGame()
 {
     if (m_state == MENU) {
+<<<<<<< HEAD
         // 确保地图已加载（地图已在选择时绘制）
         if (m_map) {
             // 地图已经绘制，只需要初始化游戏逻辑
@@ -54,6 +77,12 @@ void Game::startGame()
 
         m_state = PLAYING;
         m_gameTimer->start(16); // ~60 FPS
+=======
+        setupGame();
+        m_state = PLAYING;
+        m_gameTimer->start(16); // ~60 FPS
+        m_trapSpawnTimer->start(3000); // 重新启动陷阱生成
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         if (m_autoSolving) {
             m_autoMoveTimer->start(200); // 启动自动移动
         }
@@ -68,6 +97,7 @@ void Game::resetGame()
     m_autoSolving = false;
     m_solutionPath.clear();
     m_currentPathIndex = 0;
+<<<<<<< HEAD
     
     // 重置陷阱管理
     m_blackMarkPositions.clear();
@@ -103,6 +133,8 @@ void Game::resetGame()
 
     // 重置陷阱系统
     resetTraps();
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
     // 清理玩家和陷阱，但保持地图
     if (m_player) {
@@ -111,6 +143,11 @@ void Game::resetGame()
         m_player = nullptr;
     }
 
+<<<<<<< HEAD
+=======
+    clearTraps();
+
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     if (m_fog) {
         m_fog->clearFog(m_scene);
         delete m_fog;
@@ -118,11 +155,16 @@ void Game::resetGame()
     }
 
     m_gameTimer->stop();
+<<<<<<< HEAD
     m_trapGenerationTimer->stop();
+=======
+    m_trapSpawnTimer->stop();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     m_autoMoveTimer->stop();
 
     // 重新绘制地图（如果有的话）
     if (m_map) {
+<<<<<<< HEAD
         // 如果是随机地图，重置时重新生成新的随机地图
         if (m_currentMapType == RANDOM_MAP) {
             m_map->clearMap(m_scene);
@@ -134,6 +176,10 @@ void Game::resetGame()
             m_map->clearMap(m_scene);
             m_map->drawMap(m_scene);
         }
+=======
+        m_map->clearMap(m_scene);
+        m_map->drawMap(m_scene);
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
         // 创建玩家在起点位置
         QPoint startPos = m_map->getStartPosition();
@@ -151,12 +197,15 @@ void Game::resetGame()
             m_fog->initializeFog(m_scene);
             m_fog->updateVisibility(startPos.x(), startPos.y(), 2); // 5x5方形视野
         }
+<<<<<<< HEAD
 
         // 重新初始化陷阱系统
         initializeTraps();
 
         // 更新玩家当前位置的陷阱可见性
         updateTrapVisibilityForPlayer(startPos);
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     }
 
     emit scoreChanged(m_score);
@@ -170,7 +219,11 @@ void Game::pauseGame()
     if (m_state == PLAYING) {
         m_state = PAUSED;
         m_gameTimer->stop();
+<<<<<<< HEAD
         m_trapGenerationTimer->stop();
+=======
+        m_trapSpawnTimer->stop();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         m_autoMoveTimer->stop();
     }
 }
@@ -180,7 +233,11 @@ void Game::resumeGame()
     if (m_state == PAUSED) {
         m_state = PLAYING;
         m_gameTimer->start(16);
+<<<<<<< HEAD
         m_trapGenerationTimer->start(2000); // 重新启动陷阱生成
+=======
+        m_trapSpawnTimer->start(3000); // 重新启动陷阱生成
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         if (m_autoSolving) {
             m_autoMoveTimer->start(200); // 重新启动自动移动
         }
@@ -193,6 +250,7 @@ void Game::loadMap1()
         m_map->clearMap(m_scene);
         delete m_map;
     }
+<<<<<<< HEAD
 
     m_map = new Map(20, 20);
     m_map->generateMap1();
@@ -200,6 +258,16 @@ void Game::loadMap1()
 
     // 立即绘制地图预览
     m_map->drawMap(m_scene);
+=======
+    
+    m_map = new Map(20, 20);
+    m_map->generateMap1();
+    m_map->drawMap(m_scene);
+    
+    if (m_state == MENU) {
+        setupGame();
+    }
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 }
 
 void Game::loadMap2()
@@ -208,6 +276,7 @@ void Game::loadMap2()
         m_map->clearMap(m_scene);
         delete m_map;
     }
+<<<<<<< HEAD
 
     m_map = new Map(20, 20);
     m_map->generateMap2();
@@ -215,6 +284,16 @@ void Game::loadMap2()
 
     // 立即绘制地图预览
     m_map->drawMap(m_scene);
+=======
+    
+    m_map = new Map(20, 20);
+    m_map->generateMap2();
+    m_map->drawMap(m_scene);
+    
+    if (m_state == MENU) {
+        setupGame();
+    }
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 }
 
 bool Game::loadMapFromImage(const QString& imagePath)
@@ -226,17 +305,33 @@ bool Game::loadMapFromImage(const QString& imagePath)
 
     m_map = new Map(20, 20);
     if (m_map->generateMapFromImage(imagePath)) {
+<<<<<<< HEAD
         m_currentMapType = IMAGE_MAP;
         // 立即绘制地图预览
         m_map->drawMap(m_scene);
+=======
+        m_map->drawMap(m_scene);
+
+        if (m_state == MENU) {
+            setupGame();
+        }
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         return true;
     } else {
         // 如果图片加载失败，回退到默认地图
         qDebug() << "图片地图加载失败，使用默认地图1";
         m_map->generateMap1();
+<<<<<<< HEAD
         m_currentMapType = MAP1;
         // 立即绘制地图预览
         m_map->drawMap(m_scene);
+=======
+        m_map->drawMap(m_scene);
+
+        if (m_state == MENU) {
+            setupGame();
+        }
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         return false;
     }
 }
@@ -247,6 +342,7 @@ void Game::loadRandomMap()
         m_map->clearMap(m_scene);
         delete m_map;
     }
+<<<<<<< HEAD
 
     m_map = new Map(20, 20);
     m_map->generateRandomMap();
@@ -254,29 +350,49 @@ void Game::loadRandomMap()
 
     // 立即绘制地图预览
     m_map->drawMap(m_scene);
+=======
+    
+    m_map = new Map(20, 20);
+    m_map->generateRandomMap();
+    m_map->drawMap(m_scene);
+    
+    if (m_state == MENU) {
+        setupGame();
+    }
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 }
 
 
 void Game::movePlayer(int dx, int dy)
 {
     if (m_state != PLAYING || !m_player || !m_map) return;
+<<<<<<< HEAD
 
     if (m_player->move(dx, dy, m_map->getMapData(), m_map->getWidth(), m_map->getHeight())) {
         QPoint newPlayerPos(m_player->getX(), m_player->getY());
 
+=======
+    
+    if (m_player->move(dx, dy, m_map->getMapData(), m_map->getWidth(), m_map->getHeight())) {
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         // 更新迷雾视野
         if (m_fogMode && m_fog) {
             m_fog->updateVisibility(m_player->getX(), m_player->getY(), 2); // 5x5方形视野
         }
+<<<<<<< HEAD
 
         // 检查玩家当前位置是否是被触发的陷阱位置
         updateTrapVisibilityForPlayer(newPlayerPos);
 
+=======
+        
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         checkTrapCollisions();
         checkExitCollision();
     }
 }
 
+<<<<<<< HEAD
 void Game::updateTrapVisibilityForPlayer(const QPoint& playerPos)
 {
     if (!m_fog) return;
@@ -304,6 +420,8 @@ void Game::updateTrapVisibilityForPlayer(const QPoint& playerPos)
     }
 }
 
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 bool Game::isGameOver() const
 {
     return m_state == GAME_OVER;
@@ -319,6 +437,7 @@ int Game::getHealth() const
     return m_player ? m_player->getHealth() : 0;
 }
 
+<<<<<<< HEAD
 int Game::getTrapCount() const
 {
     int count = 0;
@@ -334,12 +453,19 @@ void Game::setupGame()
 {
     if (!m_map) return;
 
+=======
+void Game::setupGame()
+{
+    if (!m_map) return;
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Create player at start position
     QPoint startPos = m_map->getStartPosition();
     if (m_player) {
         m_scene->removeItem(m_player);
         delete m_player;
     }
+<<<<<<< HEAD
 
     m_player = new Player(startPos.x(), startPos.y(), 100);
     m_scene->addItem(m_player);
@@ -347,6 +473,15 @@ void Game::setupGame()
     // 设置玩家层级
     m_player->setZValue(5);
 
+=======
+    
+    m_player = new Player(startPos.x(), startPos.y(), 100);
+    m_scene->addItem(m_player);
+    
+    // 设置玩家层级
+    m_player->setZValue(5);
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // 初始化迷雾系统
     if (m_fogMode) {
         if (m_fog) {
@@ -357,6 +492,7 @@ void Game::setupGame()
         m_fog->initializeFog(m_scene);
         m_fog->updateVisibility(startPos.x(), startPos.y(), 2); // 5x5方形视野
     }
+<<<<<<< HEAD
 
     // 初始化陷阱系统
     initializeTraps();
@@ -365,12 +501,19 @@ void Game::setupGame()
     QPoint currentStartPos = m_map->getStartPosition();
     updateTrapVisibilityForPlayer(currentStartPos);
 
+=======
+    
+    // Create traps
+    createTraps();
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Reset score
     m_score = 0;
     emit scoreChanged(m_score);
     emit healthChanged(m_player->getHealth());
 }
 
+<<<<<<< HEAD
 void Game::initializeTraps()
 {
     if (!m_map) return;
@@ -600,6 +743,62 @@ void Game::checkTrapCollisions()
             }
 
             break; // 只处理一个陷阱碰撞
+=======
+void Game::createTraps()
+{
+    clearTraps();
+
+    if (!m_map) return;
+
+    // 游戏开始时不立即生成陷阱，由定时器控制生成
+    // 保持原有陷阱位置信息，但不立即创建陷阱对象
+}
+
+void Game::clearTraps()
+{
+    for (Trap* trap : m_traps) {
+        m_scene->removeItem(trap);
+        delete trap;
+    }
+    m_traps.clear();
+}
+
+void Game::checkTrapCollisions()
+{
+    if (!m_player || m_state != PLAYING) return;
+    
+    for (int i = m_traps.size() - 1; i >= 0; --i) {
+        Trap* trap = m_traps[i];
+        if (trap->isActive() && 
+            m_player->getX() == trap->getX() && 
+            m_player->getY() == trap->getY()) {
+            
+            // Trigger trap and show visual effect
+            trap->trigger(true); // 标记为玩家触发
+            
+            // Damage player
+            m_player->takeDamage(trap->getDamage());
+            emit healthChanged(m_player->getHealth());
+            
+            // Deactivate trap but don't remove immediately
+            // The trap will be removed by its own timer after 0.5 seconds
+            trap->deactivate();
+            
+            // Update map to remove trap
+            if (m_map) {
+                m_map->setCell(m_player->getX(), m_player->getY(), 0); // Set to path
+            }
+            
+            if (!m_player->isAlive()) {
+                m_state = GAME_OVER;
+                m_gameTimer->stop();
+                emit gameOver();
+                return;
+            }
+            
+            // Only trigger one trap per collision check
+            break;
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         }
     }
 }
@@ -607,7 +806,11 @@ void Game::checkTrapCollisions()
 void Game::checkExitCollision()
 {
     if (!m_player || !m_map || m_state != PLAYING) return;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     QPoint exitPos = m_map->getExitPosition();
     if (m_player->getX() == exitPos.x() && m_player->getY() == exitPos.y()) {
         m_state = VICTORY;
@@ -625,11 +828,16 @@ void Game::updateScore(int points)
 
 void Game::updateGame()
 {
+<<<<<<< HEAD
     // 游戏主循环
     // 更新迷雾显示，确保黑色痕迹可见
     if (m_fog && m_scene) {
         m_fog->drawFog(m_scene);
     }
+=======
+    // 定期清理过期陷阱
+    removeExpiredTraps();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 }
 
 void Game::checkCollisions()
@@ -637,12 +845,86 @@ void Game::checkCollisions()
     if (m_state == PLAYING) {
         checkTrapCollisions();
         checkExitCollision();
+<<<<<<< HEAD
         // 陷阱碰撞检查已在checkTrapCollisions中处理
     }
 }
 
 
 
+=======
+        cleanupTriggeredTraps();
+    }
+}
+
+void Game::cleanupTriggeredTraps()
+{
+    // 清理已触发且隐藏的陷阱
+    for (int i = m_traps.size() - 1; i >= 0; --i) {
+        Trap* trap = m_traps[i];
+        if (!trap->isActive() && !trap->isVisible()) {
+            m_scene->removeItem(trap);
+            m_traps.removeAt(i);
+            delete trap;
+        }
+    }
+}
+
+void Game::spawnRandomTrap()
+{
+    if (!m_map || !m_player || m_state != PLAYING) return;
+
+    // 获取玩家位置
+    int playerX = m_player->getX();
+    int playerY = m_player->getY();
+
+    // 随机选择陷阱位置，避免玩家脚下
+    int attempts = 0;
+    while (attempts < 50) {
+        int x = QRandomGenerator::global()->bounded(1, 19);
+        int y = QRandomGenerator::global()->bounded(1, 19);
+
+        // 检查是否是玩家脚下
+        if (x == playerX && y == playerY) {
+            attempts++;
+            continue;
+        }
+
+        // 检查是否是路径位置
+        if (m_map->isWalkable(x, y)) {
+            // 检查该位置是否已有陷阱
+            bool hasTrap = false;
+            for (Trap* trap : m_traps) {
+                if (trap->getX() == x && trap->getY() == y) {
+                    hasTrap = true;
+                    break;
+                }
+            }
+
+            if (!hasTrap) {
+                Trap* trap = new Trap(x, y, 20);
+                m_scene->addItem(trap);
+                m_traps.append(trap);
+                return;
+            }
+        }
+
+        attempts++;
+    }
+}
+
+void Game::removeExpiredTraps()
+{
+    for (int i = m_traps.size() - 1; i >= 0; --i) {
+        Trap* trap = m_traps[i];
+        if (trap->isExpired()) {
+            m_scene->removeItem(trap);
+            m_traps.removeAt(i);
+            delete trap;
+        }
+    }
+}
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
 void Game::setFogMode(bool enabled)
 {
@@ -740,6 +1022,7 @@ void Game::autoMoveStep()
     }
 }
 
+<<<<<<< HEAD
 
 
 
@@ -789,3 +1072,5 @@ void Game::resetTraps()
     }
 }
 
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc

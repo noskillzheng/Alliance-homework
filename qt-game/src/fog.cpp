@@ -32,9 +32,15 @@ void Fog::initializeFog(QGraphicsScene* scene)
     for (int y = 0; y < m_height; ++y) {
         for (int x = 0; x < m_width; ++x) {
             QGraphicsRectItem *fogItem = new QGraphicsRectItem(x * cellSize, y * cellSize, cellSize, cellSize);
+<<<<<<< HEAD
             fogItem->setBrush(QBrush(getFogColor(VISIBLE)));
             fogItem->setPen(QPen(Qt::NoPen));
             fogItem->setZValue(3); // 迷雾层在地图层之上，玩家层之下，确保黑色标记可见
+=======
+            fogItem->setBrush(QBrush(getFogColor(UNKNOWN)));
+            fogItem->setPen(QPen(Qt::NoPen));
+            fogItem->setZValue(10); // 迷雾层在玩家层之上，地图层之下
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
             
             scene->addItem(fogItem);
             m_fogItems.append(fogItem);
@@ -76,7 +82,10 @@ void Fog::updateVisibility(int playerX, int playerY, int visionRadius)
                 } else if (m_fogMap[x][y] == EXPLORED) {
                     m_fogMap[x][y] = VISIBLE;
                 }
+<<<<<<< HEAD
                 // 注意：PERMANENT_MARK状态不会被视野更新覆盖
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
             } else {
                 // 不在视野范围内
                 if (m_fogMap[x][y] == VISIBLE) {
@@ -144,7 +153,11 @@ void Fog::resetFog()
 {
     for (int x = 0; x < m_width; ++x) {
         for (int y = 0; y < m_height; ++y) {
+<<<<<<< HEAD
             m_fogMap[x][y] = VISIBLE;
+=======
+            m_fogMap[x][y] = UNKNOWN;
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
         }
     }
     drawFog(nullptr);
@@ -173,8 +186,11 @@ QColor Fog::getFogColor(FogState state) const
         return QColor(0, 0, 0, 100);      // 半透明黑色
     case VISIBLE:
         return QColor(0, 0, 0, 0);        // 完全透明
+<<<<<<< HEAD
     case PERMANENT_MARK:
         return QColor(0, 0, 0, 255);      // 永久黑色痕迹，完全不透明
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     default:
         return QColor(0, 0, 0, 255);
     }

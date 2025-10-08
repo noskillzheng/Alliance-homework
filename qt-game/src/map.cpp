@@ -4,10 +4,13 @@
 #include <QPen>
 #include <QRandomGenerator>
 #include <QDebug>
+<<<<<<< HEAD
 #include <vector>
 #include <queue>
 #include <algorithm>
 #include <random>
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
 Map::Map(int width, int height)
     : m_width(width)
@@ -30,19 +33,28 @@ void Map::loadMap(const char mapData[][20], int width, int height)
 {
     m_width = width;
     m_height = height;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     for (int x = 0; x < m_width; ++x) {
         for (int y = 0; y < m_height; ++y) {
             m_map[x][y] = mapData[x][y];
         }
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     findSpecialPositions();
 }
 
 void Map::drawMap(QGraphicsScene* scene)
 {
     if (!scene) return;
+<<<<<<< HEAD
 
     const int cellSize = 30;
 
@@ -50,6 +62,15 @@ void Map::drawMap(QGraphicsScene* scene)
         for (int x = 0; x < m_width; ++x) {
             QGraphicsRectItem *item = new QGraphicsRectItem(x * cellSize, y * cellSize, cellSize, cellSize);
 
+=======
+    
+    const int cellSize = 30;
+    
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            QGraphicsRectItem *item = new QGraphicsRectItem(x * cellSize, y * cellSize, cellSize, cellSize);
+            
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
             switch (m_map[x][y]) {
             case WALL:
                 item->setBrush(QBrush(Qt::gray));
@@ -66,6 +87,7 @@ void Map::drawMap(QGraphicsScene* scene)
             case START:
                 item->setBrush(QBrush(Qt::blue));
                 break;
+<<<<<<< HEAD
             case PURPLE_MARK:
                 item->setBrush(QBrush(Qt::magenta));
                 break;
@@ -74,6 +96,10 @@ void Map::drawMap(QGraphicsScene* scene)
                 break;
             }
 
+=======
+            }
+            
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
             item->setPen(QPen(Qt::black, 1));
             scene->addItem(item);
             m_graphicsItems.append(item);
@@ -84,7 +110,11 @@ void Map::drawMap(QGraphicsScene* scene)
 void Map::clearMap(QGraphicsScene* scene)
 {
     if (!scene) return;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     for (QGraphicsRectItem* item : m_graphicsItems) {
         scene->removeItem(item);
         delete item;
@@ -132,10 +162,16 @@ const char* Map::getMapData() const
 void Map::findSpecialPositions()
 {
     m_trapPositions.clear();
+<<<<<<< HEAD
     m_purpleMarkPositions.clear();
     m_startPosition = QPoint(-1, -1);
     m_exitPosition = QPoint(-1, -1);
 
+=======
+    m_startPosition = QPoint(-1, -1);
+    m_exitPosition = QPoint(-1, -1);
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     for (int x = 0; x < m_width; ++x) {
         for (int y = 0; y < m_height; ++y) {
             switch (m_map[x][y]) {
@@ -148,12 +184,15 @@ void Map::findSpecialPositions()
             case TRAP:
                 m_trapPositions.append(QPoint(x, y));
                 break;
+<<<<<<< HEAD
             case PURPLE_MARK:
                 m_purpleMarkPositions.append(QPoint(x, y));
                 break;
             case BLACK_MARK:
                 m_blackMarkPositions.append(QPoint(x, y));
                 break;
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
             }
         }
     }
@@ -185,17 +224,27 @@ void Map::generateMap1()
         {1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1}
     };
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // 加载地图数据
     for (int x = 0; x < 20; ++x) {
         for (int y = 0; y < 20; ++y) {
             m_map[x][y] = mapData[y][x];  // 修正坐标索引：mapData[y][x] 对应 m_map[x][y]
         }
     }
+<<<<<<< HEAD
 
     // 不再预定义陷阱，由游戏动态生成
     placeRandomTraps(); // 生成陷阱
 
+=======
+    
+    // 不再预定义陷阱，由游戏动态生成
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     m_width = 20;
     m_height = 20;
     findSpecialPositions();
@@ -227,17 +276,27 @@ void Map::generateMap2()
         {1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1}
     };
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // 加载地图数据
     for (int x = 0; x < 20; ++x) {
         for (int y = 0; y < 20; ++y) {
             m_map[x][y] = mapData[y][x];  // 修正坐标索引：mapData[y][x] 对应 m_map[x][y]
         }
     }
+<<<<<<< HEAD
 
     // 不再预定义陷阱，由游戏动态生成
     placeRandomTraps(); // 生成陷阱
 
+=======
+    
+    // 不再预定义陷阱，由游戏动态生成
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     m_width = 20;
     m_height = 20;
     findSpecialPositions();
@@ -245,13 +304,18 @@ void Map::generateMap2()
 
 void Map::generateRandomMap()
 {
+<<<<<<< HEAD
     // 使用DFS算法生成完美的随机迷宫
+=======
+    // 简化的随机迷宫生成算法
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // 初始化所有格子为墙
     for (int x = 0; x < 20; ++x) {
         for (int y = 0; y < 20; ++y) {
             m_map[x][y] = WALL;
         }
     }
+<<<<<<< HEAD
 
     // DFS迷宫生成
     dfsMazeGeneration(1, 1);
@@ -384,13 +448,56 @@ void Map::placeRandomTraps()
             !(x == 1 && y == 2) && !(x == 2 && y == 1) &&  // 起点附近
             !(x == 18 && y == 17) && !(x == 17 && y == 18) && // 终点附近
             isReachableFromStart(x, y)) { // 确保玩家可以到达
+=======
+    
+    // 创建基础路径结构
+    // 水平路径
+    for (int y = 1; y < 19; y += 2) {
+        for (int x = 1; x < 19; ++x) {
+            m_map[x][y] = PATH;
+        }
+    }
+    
+    // 垂直连接路径
+    for (int x = 2; x < 18; x += 2) {
+        for (int y = 2; y < 18; y += 2) {
+            m_map[x][y] = PATH;
+        }
+    }
+    
+    // 添加随机连接
+    for (int i = 0; i < 15; ++i) {
+        int x = QRandomGenerator::global()->bounded(1, 19);
+        int y = QRandomGenerator::global()->bounded(1, 19);
+        m_map[x][y] = PATH;
+    }
+    
+    // 确保起点和终点可达
+    m_map[1][1] = START;
+    m_map[18][18] = EXIT;
+    
+    // 在路径上随机放置陷阱
+    int trapCount = 0;
+    int attempts = 0;
+    while (trapCount < 6 && attempts < 100) {
+        int x = QRandomGenerator::global()->bounded(1, 19);
+        int y = QRandomGenerator::global()->bounded(1, 19);
+        
+        if (m_map[x][y] == PATH && x != 1 && y != 1 && x != 18 && y != 18) {
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
             m_map[x][y] = TRAP;
             trapCount++;
         }
         attempts++;
     }
 
+<<<<<<< HEAD
     qDebug() << "随机地图生成完成，放置了" << trapCount << "个陷阱";
+=======
+    m_width = 20;
+    m_height = 20;
+    findSpecialPositions();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 }
 
 bool Map::generateMapFromImage(const QString& imagePath)
@@ -440,9 +547,14 @@ bool Map::generateMapFromImage(const QString& imagePath)
     m_startPosition = processor.getStartPosition();
     m_exitPosition = processor.getExitPosition();
 
+<<<<<<< HEAD
     // 清空陷阱位置，然后重新生成陷阱
     m_trapPositions.clear();
     placeRandomTraps(); // 为图片生成的地图也生成陷阱
+=======
+    // 清空陷阱位置（从图片生成的地图不预设陷阱）
+    m_trapPositions.clear();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
     m_width = 20;
     m_height = 20;
@@ -454,6 +566,7 @@ bool Map::generateMapFromImage(const QString& imagePath)
     return true;
 }
 
+<<<<<<< HEAD
 void Map::createMinimalPath()
 {
     // 创建从起点(1,1)到终点(18,18)的最小路径
@@ -604,3 +717,5 @@ bool Map::isReachableFromStart(int x, int y)
 
     return isReachable(startPos.x(), startPos.y(), x, y);
 }
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc

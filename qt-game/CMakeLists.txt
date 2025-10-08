@@ -23,6 +23,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # 设置源文件和头文件
 set(PROJECT_SOURCES
+<<<<<<< HEAD
     src/main.cpp
     src/mainwindow.cpp
     src/game.cpp
@@ -32,6 +33,26 @@ set(PROJECT_SOURCES
     src/solver.cpp
     src/trap.cpp
     src/imageprocessor.cpp
+=======
+        src/main.cpp
+        src/mainwindow.cpp
+        include/mainwindow.h
+        include/mainwindow.ui
+        src/player.cpp
+        include/player.h
+        src/map.cpp
+        include/map.h
+        src/trap.cpp
+        include/trap.h
+        src/fog.cpp
+        include/fog.h
+        src/solver.cpp
+        include/solver.h
+        src/imageprocessor.cpp
+        include/imageprocessor.h
+        src/game.cpp
+        include/game.h
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 )
 
 set(PROJECT_HEADERS

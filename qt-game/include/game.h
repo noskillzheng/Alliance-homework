@@ -19,19 +19,31 @@ class Game : public QObject
 public:
     explicit Game(QGraphicsScene* scene, QObject* parent = nullptr);
     ~Game();
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Game control
     void startGame();
     void resetGame();
     void pauseGame();
     void resumeGame();
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Map management
     void loadMap1();
     void loadMap2();
     void loadRandomMap();
     bool loadMapFromImage(const QString& imagePath);
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Fog mode
     void setFogMode(bool enabled);
     bool isFogMode() const { return m_fogMode; }
@@ -40,19 +52,31 @@ public:
     void startAutoSolve();
     void stopAutoSolve();
     bool isAutoSolving() const { return m_autoSolving; }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Player control
     void movePlayer(int dx, int dy);
     bool isGameOver() const;
     bool isVictory() const;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Getters
     Player* getPlayer() const { return m_player; }
     Map* getMap() const { return m_map; }
     int getScore() const { return m_score; }
     int getHealth() const;
+<<<<<<< HEAD
     int getTrapCount() const;
 
+=======
+    
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     // Game state
     enum GameState {
         MENU,
@@ -61,6 +85,7 @@ public:
         GAME_OVER,
         VICTORY
     };
+<<<<<<< HEAD
 
     GameState getState() const { return m_state; }
 
@@ -74,16 +99,28 @@ public:
 
     MapType getCurrentMapType() const { return m_currentMapType; }
 
+=======
+    
+    GameState getState() const { return m_state; }
+
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 signals:
     void gameOver();
     void victory();
     void healthChanged(int health);
     void scoreChanged(int score);
+<<<<<<< HEAD
     void trapCountChanged(int count);
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
 private slots:
     void updateGame();
     void checkCollisions();
+<<<<<<< HEAD
+=======
+    void cleanupTriggeredTraps();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     void autoMoveStep();
 
 private:
@@ -91,8 +128,15 @@ private:
     Player* m_player;
     Map* m_map;
     Fog* m_fog;
+<<<<<<< HEAD
     QTimer* m_gameTimer;
     QTimer* m_collisionTimer;
+=======
+    QList<Trap*> m_traps;
+    QTimer* m_gameTimer;
+    QTimer* m_collisionTimer;
+    QTimer* m_trapSpawnTimer;
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     QTimer* m_autoMoveTimer;
 
     int m_score;
@@ -101,6 +145,7 @@ private:
     bool m_autoSolving;
     QList<QPoint> m_solutionPath;
     int m_currentPathIndex;
+<<<<<<< HEAD
     MapType m_currentMapType;
     Solver* m_solver;
     
@@ -138,6 +183,18 @@ private:
     QPoint findValidTrapPosition();
     void clearAllTraps();
     void resetTraps();
+=======
+    Solver* m_solver;
+    
+    void setupGame();
+    void createTraps();
+    void clearTraps();
+    void checkTrapCollisions();
+    void checkExitCollision();
+    void updateScore(int points);
+    void spawnRandomTrap();
+    void removeExpiredTraps();
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 };
 
 #endif // GAME_H

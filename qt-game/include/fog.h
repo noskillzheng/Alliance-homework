@@ -10,10 +10,16 @@ class Fog
 {
 public:
     enum FogState {
+<<<<<<< HEAD
         UNKNOWN = 0,        // 未知区域（黑色）
         EXPLORED = 1,       // 已探索区域（半透明）
         VISIBLE = 2,        // 当前可见区域（完全透明）
         PERMANENT_MARK = 3  // 永久标记（黑色痕迹，不会被视野覆盖）
+=======
+        UNKNOWN = 0,    // 未知区域（黑色）
+        EXPLORED = 1,   // 已探索区域（半透明）
+        VISIBLE = 2     // 当前可见区域（完全透明）
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     };
     
     Fog(int width = 20, int height = 20);

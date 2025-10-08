@@ -48,7 +48,10 @@ private slots:
     void onVictory();
     void onHealthChanged(int health);
     void onScoreChanged(int score);
+<<<<<<< HEAD
     void onTrapCountChanged(int count);
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
 
 private:
     Ui::MainWindow *ui;
@@ -81,7 +84,10 @@ private:
     QProgressBar *healthBar;
     QLabel *scoreLabel;
     QLabel *healthLabel;
+<<<<<<< HEAD
     QLabel *trapCountLabel;
+=======
+>>>>>>> e3a6255ae8c87c7b077a5583bf70026efc77e1bc
     QLabel *instructionsLabel;
     
     // Game logic
