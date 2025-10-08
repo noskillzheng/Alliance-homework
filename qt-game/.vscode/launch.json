@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Qt Game",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/qt-game",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "DISPLAY",
+                    "value": "${env:DISPLAY}"
+                },
+                {
+                    "name": "QT_QPA_PLATFORM",
+                    "value": "xcb"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build Script",
+            "visualizerFile": "/home/user/.vscode-server/data/User/workspaceStorage/6bad3be6d16c69b25a058db4276c6d1c/tonka3000.qtvsctools/qt.natvis.xml"
+        },
+        {
+            "name": "Debug Qt Game (Attach)",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/build/qt-game",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "visualizerFile": "/home/user/.vscode-server/data/User/workspaceStorage/6bad3be6d16c69b25a058db4276c6d1c/tonka3000.qtvsctools/qt.natvis.xml"
+        }
+    ]
+}

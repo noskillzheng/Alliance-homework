@@ -10,48 +10,78 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# 设置Qt路径
 set(CMAKE_PREFIX_PATH "/home/zheng/Qt/6.8.3/gcc_64/lib/cmake")
+
+# 查找Qt库
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+# 设置包含目录
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# 设置源文件和头文件
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+    src/main.cpp
+    src/mainwindow.cpp
+    src/game.cpp
+    src/map.cpp
+    src/player.cpp
+    src/fog.cpp
+    src/solver.cpp
+    src/trap.cpp
+    src/imageprocessor.cpp
 )
 
+set(PROJECT_HEADERS
+    include/mainwindow.h
+    include/game.h
+    include/map.h
+    include/player.h
+    include/fog.h
+    include/solver.h
+    include/trap.h
+    include/imageprocessor.h
+)
+
+# UI文件
+set(PROJECT_UI
+    include/mainwindow.ui
+)
+
+# 如果使用Qt6
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(qt-game
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        ${PROJECT_HEADERS}
+        ${PROJECT_UI}
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET qt-game APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
         add_library(qt-game SHARED
             ${PROJECT_SOURCES}
+            ${PROJECT_HEADERS}
+            ${PROJECT_UI}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(qt-game
             ${PROJECT_SOURCES}
+            ${PROJECT_HEADERS}
+            ${PROJECT_UI}
         )
     endif()
 endif()
 
+# 链接Qt库
 target_link_libraries(qt-game PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
+# 设置目标属性
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.qt-game)
+    set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.qt-game)
 endif()
+
 set_target_properties(qt-game PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -60,6 +90,7 @@ set_target_properties(qt-game PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+# 安装配置
 include(GNUInstallDirs)
 install(TARGETS qt-game
     BUNDLE DESTINATION .
@@ -67,6 +98,7 @@ install(TARGETS qt-game
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+# 如果使用Qt6，需要最终化可执行文件
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(qt-game)
 endif()
