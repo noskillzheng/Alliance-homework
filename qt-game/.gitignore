@@ -1,0 +1,56 @@
+# 构建目录和输出文件
+build/
+cmake-build-*/
+
+# 可执行文件
+*.exe
+*.out
+*.app
+
+# 对象文件
+*.o
+*.obj
+
+# 依赖文件
+*.d
+
+# CMake生成的文件
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# Qt生成的文件
+*.moc
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+
+# 临时文件
+*.tmp
+*.temp
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日志文件
+*.log
+
+# 测试输出
+test_results/
+
+# Docker相关
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-build.sh

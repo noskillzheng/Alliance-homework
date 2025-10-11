@@ -1,0 +1,67 @@
+{
+	"name": "Qt6 Game Development",
+	"image": "stateoftheartio/qt6:6.6-gcc-aqt",
+	"privileged": true,
+	"mounts": [
+		{
+			"source": "${localWorkspaceFolder}",
+			"target": "/workspace",
+			"type": "bind"
+		},
+		{
+			"source": "/dev",
+			"target": "/dev",
+			"type": "bind"
+		},
+		{
+			"source": "/tmp/.X11-unix",
+			"target": "/tmp/.X11-unix",
+			"type": "bind"
+		}
+	],
+	"containerEnv": {
+		"DISPLAY": "${localEnv:DISPLAY}",
+		"QT_QPA_PLATFORM": "xcb",
+		"CMAKE_PREFIX_PATH": "/opt/Qt/6.6.1/gcc_64/lib/cmake",
+		"QT_QPA_FONTDIR": "/usr/share/fonts/truetype",
+		"FONTCONFIG_PATH": "/etc/fonts",
+		"FC_CONFIG_DIR": "/etc/fonts"
+	},
+	"runArgs": [
+		"--network",
+		"host",
+		"--cap-add=SYS_PTRACE"
+	],
+	"workspaceFolder": "/workspace",
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libx11-dev libxext-dev libxrender-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libudev-dev libxkbcommon-dev libxkbcommon-x11-dev fonts-wqy-zenhei locales && sudo sed -i -e 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && sudo locale-gen && sudo update-locale LANG=zh_CN.UTF-8 && sudo fc-cache -f -v && ./.devcontainer/postCreateCommand.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// C++ language support
+				"llvm-vs-code-extensions.vscode-clangd",
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+				// CMake language support
+				"twxs.cmake",
+				// Qt specific
+				"tonka3000.qtvsctools",
+				// Code spell checking
+				"streetsidesoftware.code-spell-checker",
+				// Git enhancements
+				"mhutchie.git-graph",
+				// Debugging
+				"ms-vscode.cpp-debug"
+			],
+			"settings": {
+				"cmake.buildDirectory": "${workspaceFolder}/build",
+				"cmake.configureOnOpen": true,
+				"cmake.generator": "Unix Makefiles",
+				"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+				"C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+				"C_Cpp.default.compilerPath": "/usr/bin/g++",
+				"C_Cpp.default.cStandard": "c17",
+				"C_Cpp.default.cppStandard": "c++17"
+			}
+		}
+	}
+}

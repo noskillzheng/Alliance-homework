@@ -1,0 +1,26 @@
+[
+{
+  "directory": "/home/zheng/Alli/week2/game/build",
+  "command": "/usr/bin/c++  -I/home/zheng/Alli/week2/game/include  -o CMakeFiles/game.dir/main/main.cpp.o -c /home/zheng/Alli/week2/game/main/main.cpp",
+  "file": "/home/zheng/Alli/week2/game/main/main.cpp",
+  "output": "CMakeFiles/game.dir/main/main.cpp.o"
+},
+{
+  "directory": "/home/zheng/Alli/week2/game/build",
+  "command": "/usr/bin/c++  -I/home/zheng/Alli/week2/game/include  -o CMakeFiles/game.dir/tools/gameengine.cpp.o -c /home/zheng/Alli/week2/game/tools/gameengine.cpp",
+  "file": "/home/zheng/Alli/week2/game/tools/gameengine.cpp",
+  "output": "CMakeFiles/game.dir/tools/gameengine.cpp.o"
+},
+{
+  "directory": "/home/zheng/Alli/week2/game/build",
+  "command": "/usr/bin/c++  -I/home/zheng/Alli/week2/game/include  -o CMakeFiles/game.dir/tools/map.cpp.o -c /home/zheng/Alli/week2/game/tools/map.cpp",
+  "file": "/home/zheng/Alli/week2/game/tools/map.cpp",
+  "output": "CMakeFiles/game.dir/tools/map.cpp.o"
+},
+{
+  "directory": "/home/zheng/Alli/week2/game/build",
+  "command": "/usr/bin/c++  -I/home/zheng/Alli/week2/game/include  -o CMakeFiles/game.dir/tools/player.cpp.o -c /home/zheng/Alli/week2/game/tools/player.cpp",
+  "file": "/home/zheng/Alli/week2/game/tools/player.cpp",
+  "output": "CMakeFiles/game.dir/tools/player.cpp.o"
+}
+]
