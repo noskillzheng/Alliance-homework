@@ -1,7 +1,7 @@
 # 算法第2周作业
 
 [仓库地址](https://github.com/noskillzheng/Alliance-homework.git)
-
+[fork仓库地址](https://@github.com:noskillzheng/ros2-develop.git）
 ## 任务一
 
 game:最开始做的一个最简单的小项目，没有qt6依赖，没有ui。
@@ -19,4 +19,5 @@ ros2_ws/src文件下：
 协议：Apache-2.0
 
 在source 的时候选择的是local_setup.sh,其他的编译不通过。
+
 
