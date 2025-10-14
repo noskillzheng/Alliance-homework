@@ -1,0 +1,101 @@
+# CMake构建目录
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# 可执行文件 - 保留这些，这样用户可以直接运行
+*.exe
+armor_detection_traditional
+armor_detection_yolo
+armor_detection_cmd
+
+# 编译生成的文件
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+
+# Python相关 - 保留yolo_env，这样用户可以直接运行Python脚本
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+yolo_env/
+
+# IDE和编辑器 - 保留.vscode，这样用户可以直接使用VSCode配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 输出文件 - 保留results，这样用户可以看到示例输出
+output/
+# results/
+*.avi
+*.mp4
+*.mov
+
+# 模型文件 - 保留models目录，这样用户可以直接使用预训练模型
+# *.pt
+# *.onnx
+# *.weights
+# *.cfg
+# models/
+
+# 数据集 - 排除原始数据集，但保留处理后的数据集
+dataset/raw_frames/
+dataset/raw_images/
+dataset/yolo_dataset/images/train.cache
+dataset/yolo_dataset/images/val.cache
+
+# 测试视频 - 保留测试视频，这样用户可以直接测试
+# data/video/*.avi
+
+# 备份文件
+*.bak
+*.backup
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+
+# 文档
+docs/_build/
+*.toc
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# 其他
+*.orig
+*.rej

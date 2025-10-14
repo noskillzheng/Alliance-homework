@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# 获取脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 激活Python环境
+source "$SCRIPT_DIR/yolo_env/bin/activate"
+
+# 运行命令行检测程序
+python "$SCRIPT_DIR/armor_detection_cmd.py" "$@"

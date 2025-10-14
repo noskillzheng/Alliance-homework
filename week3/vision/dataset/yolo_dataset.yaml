@@ -1,0 +1,14 @@
+# RoboMaster 装甲板数据集配置
+path: ./dataset/yolo_dataset
+train: images/train
+val: images/val
+
+nc: 1  # 类别数量
+names: ['armor']  # 装甲板类别
+
+# 数据集信息
+dataset_info:
+  name: "RoboMaster Armor Detection"
+  version: "1.0"
+  author: "Vision Team"
+  description: "装甲板目标检测数据集"
