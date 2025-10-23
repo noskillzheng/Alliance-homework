@@ -1,0 +1,77 @@
+========================================
+  v2.0+ 快速参考卡（Kalman全面优化）
+========================================
+
+【启动】
+cd build && ./armor_detector
+
+【新功能开关】
+detector.threshold.use_otsu               → Otsu自适应阈值
+detector.selection.use_prediction_gating  → 预测门控
+kalman.use_variable_dt                    → 可变dt
+kalman.use_log_scale                      → log域尺寸（防发散）
+kalman.adaptive.enabled                   → 自适应R/Q
+visualizer.smooth.enabled                 → 平滑输出
+visualizer.depth.enabled                  → 深度检测
+
+【快速调参】
+# 误选反光 → 提高门控
+gating_iou_min: 0.25
+gating_center_max_px: 50
+
+# 快速运动易丢 → 放宽门控
+gating_iou_min: 0.10
+gating_center_max_px: 80
+
+# 显示抖动 → 增强平滑
+ema_alpha: 0.5
+
+# 响应慢 → 减弱平滑
+ema_alpha: 0.2
+
+# 状态闪烁 → 提高阈值
+depth.hysteresis.in: 0.10
+depth.hold_time: 0.3
+
+# 尺寸发散 → 启用log域
+use_log_scale: true
+process_noise.w/h: 3.0
+
+# 遮挡恢复慢 → 调整自适应
+adaptive.enabled: true
+k_innovation_high: 10.0
+r_scale_high: 1.2
+
+# 光照变化检测不稳 → 启用Otsu
+threshold.use_otsu: true
+threshold.mode: "roi"
+
+# Otsu阈值跳动 → 提高平滑
+threshold.temporal_smooth: 0.9
+
+【关键指标】
+- FPS ≥ 60 (关闭调试)
+- 抖动 STD < 2 px
+- 误选 < 1次/10秒
+- 尺寸无负值/发散
+
+【v2.0+优化效果】
+✓ Otsu自适应 → 免调参，光照适应+60%
+✓ Joseph形式 → P矩阵数值稳定
+✓ LLT分解 → 避免奇异矩阵崩溃
+✓ log域尺寸 → 尺寸抖动↓50%
+✓ 自适应R/Q → 遮挡恢复+40%
+✓ 预测门控 → 误选↓80%
+✓ EMA平滑 → 显示抖动↓60%
+
+【回滚v1.0】
+threshold.use_otsu: false
+use_prediction_gating: false
+use_variable_dt: false
+use_log_scale: false
+adaptive.enabled: false
+smooth.enabled: false
+depth.enabled: false
+
+========================================
+

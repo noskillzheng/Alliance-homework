@@ -1,0 +1,25 @@
+============================================
+装甲板识别系统 - 快速开始
+============================================
+
+【运行程序】
+cd /home/zheng/Alli/c++learning/armor_detector/build
+export LD_LIBRARY_PATH=/opt/MVS/lib/64:$LD_LIBRARY_PATH
+./armor_detector
+
+【切换识别颜色】
+nano config/detector_params.conf
+修改：target_color = red    （或 blue）
+
+【控制键】
+d    - 调试模式（必用！查看二值图）
+q    - 退出
+r    - 重置滤波器
+c    - 清空轨迹
+空格 - 暂停
+
+【详细操作】
+请查看：战队部署指南.md
+
+============================================
+

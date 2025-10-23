@@ -1,0 +1,242 @@
+# ============================================
+# CMake 构建产物
+# ============================================
+build/
+Build/
+BUILD/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+install_manifest.txt
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# ============================================
+# C++ 编译产物
+# ============================================
+# 目标文件
+*.o
+*.obj
+*.lo
+*.slo
+
+# 预编译头文件
+*.gch
+*.pch
+
+# 编译的动态库
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# 编译的静态库
+*.a
+*.lib
+*.la
+
+# 可执行文件
+*.exe
+*.out
+*.app
+build/armor_detector
+build/sentry_trajectory_planner
+
+# 编译器生成的依赖文件
+*.d
+*.depend
+
+# ============================================
+# Python 相关
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+python_yolo_env/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# ============================================
+# IDE 和编辑器配置
+# ============================================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# CLion
+.idea/
+cmake-build-*/
+
+# clangd
+.cache/
+.clangd/
+
+# Qt Creator
+*.autosave
+*.user
+*.creator
+*.creator.*
+*.files
+*.includes
+*.config
+*.cxxflags
+*.cflags
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.*.sw?
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ============================================
+# 系统文件
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+.directory
+.Trash-*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ============================================
+# ROS2 相关
+# ============================================
+install/
+log/
+devel/
+*.bag
+AMENT_IGNORE
+
+# ============================================
+# 运行时生成的数据文件
+# ============================================
+# CSV 数据文件
+*.csv
+!**/config/*.csv
+
+# 图像和视频输出
+*.avi
+*.mp4
+*.png
+*.jpg
+*.jpeg
+!**/data/**/*.png
+!**/data/**/*.jpg
+!**/data/**/*.jpeg
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# ============================================
+# 模型文件（通常较大）
+# ============================================
+*.pt
+*.pth
+*.onnx
+*.weights
+*.caffemodel
+models/trained/
+
+# ============================================
+# 文档和测试输出
+# ============================================
+# Doxygen
+html/
+latex/
+doc/html/
+doc/latex/
+
+# 测试覆盖率
+*.gcov
+*.gcda
+*.gcno
+
+# ============================================
+# 第三方库（如果通过包管理器安装）
+# ============================================
+third_party/*/
+
+# ============================================
+# 压缩包和归档
+# ============================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# ============================================
+# 其他
+# ============================================
+# 临时调试文件（但不包括tests目录下的正式测试）
+debug_*
+*.debug
+# 保留 tests/ 目录下的所有文件
+!tests/
+!tests/**
+
+# 性能分析文件
+*.prof
+perf.data*
+callgrind.out.*
+
+# 核心转储
+core.*
+/core
+
+# .roo 目录（可能是某些IDE或工具产生的）
+.roo/
+

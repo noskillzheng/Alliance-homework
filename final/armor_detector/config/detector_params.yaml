@@ -1,0 +1,72 @@
+# 检测器参数配置
+detector:
+  # 颜色设置
+  target_color: "red"                    # red 或 blue
+  color_method: "channel_separation"     # channel_separation 或 hsv
+  binary_threshold: 80                   # 二值化阈值（60-110）
+  
+  # Otsu自适应阈值（v2.0+）
+  threshold:
+    use_otsu: true                       # 启用Otsu自适应
+    mode: "roi"                          # global/roi/hybrid
+    roi_scale: 1.8                       # ROI放大倍数
+    min_threshold: 40                    # 最小阈值保护
+    max_threshold: 150                   # 最大阈值保护
+    temporal_smooth: 0.7                 # 时序平滑系数
+  
+  # 装甲板选择策略（基于预测门控）
+  selection:
+    use_prediction_gating: true          # 启用预测门控
+    gating_iou_min: 0.15                 # IoU最小阈值
+    gating_center_max_px: 60             # 中心距离最大值（像素）
+    weights:
+      confidence: 0.6                    # 置信度权重
+      iou: 0.4                           # IoU权重
+      ratio: 0.2                         # 比例偏差权重
+    armor_ratio_ref: 3.5                 # 装甲板参考宽高比
+  
+  # 灯条检测参数
+  light:
+    min_area: 30.0                       # 最小面积
+    max_area: 5000.0                     # 最大面积
+    min_aspect_ratio: 1.5                # 最小长宽比
+    max_aspect_ratio: 8.0                # 最大长宽比
+    max_angle: 40.0                      # 最大倾斜角度（度）
+  
+  # 装甲板匹配参数
+  armor:
+    min_ratio: 1.0                       # 最小宽高比
+    max_ratio: 5.0                       # 最大宽高比
+    max_angle_diff: 20.0                 # 两灯条最大角度差（度）
+    max_height_diff_ratio: 0.5           # 高度差比例
+    max_y_diff_ratio: 1.5                # Y坐标差比例
+    min_area_ratio: 0.3                  # 最小面积比
+  
+  # HSV阈值（仅当color_method=hsv时使用）
+  hsv:
+    red:
+      h_low: 0
+      s_low: 120
+      v_low: 150
+      h_high: 10
+      s_high: 255
+      v_high: 255
+      # 红色第二段（HSV环绕）
+      h_low2: 170
+      s_low2: 120
+      v_low2: 150
+      h_high2: 180
+      s_high2: 255
+      v_high2: 255
+    
+    blue:
+      h_low: 100
+      s_low: 120
+      v_low: 100
+      h_high: 130
+      s_high: 255
+      v_high: 255
+  
+  # 调试
+  debug_mode: false
+
