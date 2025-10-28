@@ -45,9 +45,9 @@ bool ConfigReader::loadYAML(const std::string& filepath) {
             indent++;
         }
         
-        // 根据缩进调整前缀栈
-        if (static_cast<int>(indent) <= last_indent) {
-            // 缩进减少或相同，弹出栈
+        // 根据缩进调整前缀栈（只在缩进减少时弹栈）
+        if (static_cast<int>(indent) < last_indent) {
+            // 缩进减少，弹出栈
             int levels = ((last_indent - static_cast<int>(indent)) / 2) + 1;
             for (int i = 0; i < levels && !prefix_stack.empty(); i++) {
                 prefix_stack.pop_back();
@@ -60,15 +60,18 @@ bool ConfigReader::loadYAML(const std::string& filepath) {
             std::string key = trim(trimmed.substr(0, colon_pos));
             std::string value = trim(trimmed.substr(colon_pos + 1));
             
-            // 移除引号
-            if (!value.empty() && (value.front() == '"' || value.front() == '\'')) {
-                value = value.substr(1, value.length() - 2);
-            }
-            
-            // 移除行尾注释
+            // 先移除行尾注释
             size_t comment_pos = value.find('#');
             if (comment_pos != std::string::npos) {
                 value = trim(value.substr(0, comment_pos));
+            }
+            
+            // 再移除引号（处理干净的value）
+            if (!value.empty() && value.length() >= 2) {
+                if ((value.front() == '"' && value.back() == '"') ||
+                    (value.front() == '\'' && value.back() == '\'')) {
+                    value = value.substr(1, value.length() - 2);
+                }
             }
             
             if (value.empty()) {

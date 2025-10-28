@@ -1,7 +1,7 @@
 # 相机参数配置
 camera:
   # 曝光参数
-  exposure_time: 5000      # 曝光时间（微秒）
+  exposure_time: 6000      # 曝光时间（微秒）
   gain: 10.1               # 增益值
   gamma: 0.7               # 伽马值
   
@@ -9,8 +9,6 @@ camera:
   resolution:
     width: 640             # 像素
     height: 480            # 像素
-  
-  fps: 60                  # 目标帧率
 
 # 备用方案（无海康相机时）
 fallback:

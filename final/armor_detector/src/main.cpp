@@ -83,6 +83,7 @@ int main(int /* argc */, char** /* argv */) {
     if (!detector_config.loadConfig("detector_params.yaml")) {
         std::cerr << "[主程序] 警告：无法加载检测器配置，使用默认值" << std::endl;
     }
+
     if (!kalman_config.loadConfig("kalman_params.yaml")) {
         std::cerr << "[主程序] 警告：无法加载卡尔曼滤波器配置，使用默认值" << std::endl;
     }
@@ -93,9 +94,9 @@ int main(int /* argc */, char** /* argv */) {
     std::cout << "[主程序] 正在初始化相机..." << std::endl;
     HikCamera camera;
     
-    // 读取相机参数
-    int exposure_time = config.getInt("camera.exposure_time", 5000);
-    float gain = config.getFloat("camera.gain", 10.0F);
+    // 读取相机参数（默认值与yaml一致）
+    int exposure_time = config.getInt("camera.exposure_time", 6000);
+    float gain = config.getFloat("camera.gain", 10.1F);
     float gamma = config.getFloat("camera.gamma", 0.7F);
     int width = config.getInt("camera.resolution.width", 640);
     int height = config.getInt("camera.resolution.height", 480);
@@ -139,41 +140,91 @@ int main(int /* argc */, char** /* argv */) {
     std::string color_method = detector_config.getString("detector.color_method", "channel_separation");
     detector.setColorMethod(color_method);
     
-    // 设置二值化阈值（通道分离法）
-    int binary_threshold = detector_config.getInt("detector.binary_threshold", 80);
-    detector.setBinaryThreshold(binary_threshold);
+    // 设置二值化阈值（默认值与yaml一致）
+    detector.setBinaryThreshold(detector_config.getInt("detector.binary_threshold", 50));
+    detector.setBrightnessThreshold(detector_config.getInt("detector.brightness_threshold", 150));
+    detector.setUseBrightnessFilter(detector_config.getBool("detector.use_brightness_filter", true));
     
-    // 设置检测参数
-    detector.setMinLightArea(detector_config.getFloat("detector.light.min_area", 30.0F));
-    detector.setMaxLightRatio(detector_config.getFloat("detector.light.max_aspect_ratio", 8.0F));
-    detector.setDebugMode(detector_config.getBool("detector.debug_mode", false));
+    // 设置形态学操作
+    bool use_morphology = detector_config.getBool("detector.use_morphology", true);
+    int morph_kernel = detector_config.getInt("detector.morph_kernel_size", 3);
+    detector.setMorphology(use_morphology, morph_kernel);
+    std::cout << "[配置] 形态学操作: " << (use_morphology ? "启用" : "禁用") 
+              << ", 核大小=" << morph_kernel << "x" << morph_kernel << std::endl;
     
-    // 设置Otsu自适应阈值参数
-    bool use_otsu = detector_config.getBool("detector.threshold.use_otsu", true);
-    std::string otsu_mode = detector_config.getString("detector.threshold.mode", "roi");
-    double otsu_roi_scale = detector_config.getDouble("detector.threshold.roi_scale", 1.8);
-    int otsu_min = detector_config.getInt("detector.threshold.min_threshold", 40);
-    int otsu_max = detector_config.getInt("detector.threshold.max_threshold", 150);
-    double otsu_smooth = detector_config.getDouble("detector.threshold.temporal_smooth", 0.7);
-    detector.setOtsuParams(use_otsu, otsu_mode, otsu_roi_scale, otsu_min, otsu_max, otsu_smooth);
+    // 设置灯条检测参数（修正键名：去掉detector前缀）
+    detector.setMinLightArea(detector_config.getFloat("light.min_area", 50.0F));
+    detector.setMaxLightArea(detector_config.getFloat("light.max_area", 3500.0F));
+    detector.setMinLightRatio(detector_config.getFloat("light.min_aspect_ratio", 2.0F));
+    detector.setMaxLightRatio(detector_config.getFloat("light.max_aspect_ratio", 8.0F));
+    detector.setMaxLightAngle(detector_config.getFloat("light.max_angle", 15.0F));
     
-    // 如果使用HSV方法，从配置文件加载HSV阈值
+    std::cout << "[配置] 灯条参数: 面积[" 
+              << detector_config.getFloat("light.min_area", 50.0F) << ", " 
+              << detector_config.getFloat("light.max_area", 3500.0F) << "], 长宽比[" 
+              << detector_config.getFloat("light.min_aspect_ratio", 2.0F) << ", " 
+              << detector_config.getFloat("light.max_aspect_ratio", 8.0F) << "], 角度≤" 
+              << detector_config.getFloat("light.max_angle", 15.0F) << "°" << std::endl;
+    
+    // 设置装甲板匹配参数（修正键名：去掉detector前缀）
+    detector.setArmorRatioRange(
+        detector_config.getFloat("armor.min_ratio", 2.0F),
+        detector_config.getFloat("armor.max_ratio", 4.5F));
+    detector.setMaxAngleDiff(detector_config.getFloat("armor.max_angle_diff", 15.0F));
+    detector.setMaxHeightDiffRatio(detector_config.getFloat("armor.max_height_diff_ratio", 0.3F));
+    detector.setMaxYDiffRatio(detector_config.getFloat("armor.max_y_diff_ratio", 0.8F));
+    detector.setMinAreaRatio(detector_config.getFloat("armor.min_area_ratio", 0.3F));
+    detector.setMaxTiltForDirection(detector_config.getFloat("armor.max_tilt_for_direction_check", 5.0F));
+    
+    std::cout << "[配置] 装甲板匹配: 宽高比[" 
+              << detector_config.getFloat("armor.min_ratio", 2.0F) << ", " 
+              << detector_config.getFloat("armor.max_ratio", 4.5F) << "], 角度差≤" 
+              << detector_config.getFloat("armor.max_angle_diff", 15.0F) << "°" << std::endl;
+    
+    // 获取装甲板最小置信度阈值
+    float min_armor_confidence = detector_config.getFloat("armor.min_confidence", 0.3F);
+    
+    // 设置灯条质量过滤参数（修正键名：去掉detector前缀）
+    detector.setLightQualityParams(
+        detector_config.getFloat("light_quality.min_fill_ratio", 0.25F),
+        detector_config.getFloat("light_quality.max_fill_ratio", 0.95F),
+        detector_config.getFloat("light_quality.max_fill_area", 800.0F),
+        detector_config.getFloat("light_quality.min_compactness", 0.2F));
+    
+    bool debug_mode_runtime = detector_config.getBool("debug_mode", true);
+    detector.setDebugMode(debug_mode_runtime);
+    std::cout << "[配置] debug_mode = " << (debug_mode_runtime ? "true" : "false") << std::endl;
+    
+    // 设置Otsu自适应阈值参数（键名保留detector前缀）
+    detector.setOtsuParams(
+        detector_config.getBool("detector.threshold.use_otsu", true),
+        detector_config.getString("detector.threshold.mode", "roi"),
+        detector_config.getDouble("detector.threshold.roi_scale", 1.8),
+        detector_config.getInt("detector.threshold.min_threshold", 40),
+        detector_config.getInt("detector.threshold.max_threshold", 150),
+        detector_config.getDouble("detector.threshold.temporal_smooth", 0.7));
+    
+    // 如果使用HSV方法，从配置文件加载HSV阈值（修正键名：去掉detector前缀）
     if (color_method == "hsv") {
         if (target_color == "red") {
-            cv::Scalar hsv_low(detector_config.getInt("detector.hsv.red.h_low", 0),
-                              detector_config.getInt("detector.hsv.red.s_low", 120),
-                              detector_config.getInt("detector.hsv.red.v_low", 150));
-            cv::Scalar hsv_high(detector_config.getInt("detector.hsv.red.h_high", 10),
-                               detector_config.getInt("detector.hsv.red.s_high", 255),
-                               detector_config.getInt("detector.hsv.red.v_high", 255));
+            cv::Scalar hsv_low(
+                detector_config.getInt("hsv.red.h_low", 0),
+                detector_config.getInt("hsv.red.s_low", 120),
+                detector_config.getInt("hsv.red.v_low", 150));
+            cv::Scalar hsv_high(
+                detector_config.getInt("hsv.red.h_high", 10),
+                detector_config.getInt("hsv.red.s_high", 255),
+                detector_config.getInt("hsv.red.v_high", 255));
             detector.setHSVThreshold(hsv_low, hsv_high);
         } else if (target_color == "blue") {
-            cv::Scalar hsv_low(detector_config.getInt("detector.hsv.blue.h_low", 100),
-                              detector_config.getInt("detector.hsv.blue.s_low", 120),
-                              detector_config.getInt("detector.hsv.blue.v_low", 100));
-            cv::Scalar hsv_high(detector_config.getInt("detector.hsv.blue.h_high", 130),
-                               detector_config.getInt("detector.hsv.blue.s_high", 255),
-                               detector_config.getInt("detector.hsv.blue.v_high", 255));
+            cv::Scalar hsv_low(
+                detector_config.getInt("blue.h_low", 100),
+                detector_config.getInt("blue.s_low", 120),
+                detector_config.getInt("blue.v_low", 100));
+            cv::Scalar hsv_high(
+                detector_config.getInt("blue.h_high", 130),
+                detector_config.getInt("blue.s_high", 255),
+                detector_config.getInt("blue.v_high", 255));
             detector.setHSVThreshold(hsv_low, hsv_high);
         }
     }
@@ -194,18 +245,17 @@ int main(int /* argc */, char** /* argv */) {
     kf.setFadingFactor(fading_factor);
     
     // 启用log域尺寸跟踪
-    bool use_log_scale = kalman_config.getBool("kalman.use_log_scale", true);
-    kf.setLogScale(use_log_scale);
+    kf.setLogScale(kalman_config.getBool("kalman.use_log_scale", true));
     
     // 设置自适应R/Q
-    bool adaptive_enabled = kalman_config.getBool("kalman.adaptive.enabled", true);
-    double k_innov_low = kalman_config.getDouble("kalman.adaptive.k_innovation_low", 2.0);
-    double k_innov_high = kalman_config.getDouble("kalman.adaptive.k_innovation_high", 8.0);
-    double r_scale_low = kalman_config.getDouble("kalman.adaptive.r_scale_low", 0.7);
-    double r_scale_high = kalman_config.getDouble("kalman.adaptive.r_scale_high", 1.4);
-    kf.setAdaptiveNoise(adaptive_enabled, k_innov_low, k_innov_high, r_scale_low, r_scale_high);
+    kf.setAdaptiveNoise(
+        kalman_config.getBool("kalman.adaptive.enabled", true),
+        kalman_config.getDouble("kalman.adaptive.k_innovation_low", 2.0),
+        kalman_config.getDouble("kalman.adaptive.k_innovation_high", 8.0),
+        kalman_config.getDouble("kalman.adaptive.r_scale_low", 0.7),
+        kalman_config.getDouble("kalman.adaptive.r_scale_high", 1.4));
     
-    // 设置噪声参数（从配置文件读取）
+    // 设置噪声参数（默认值与yaml一致）
     if (use_enhanced) {
         Eigen::VectorXd process_noise(8);
         process_noise << kalman_config.getDouble("kalman.process_noise.x", 0.5),
@@ -228,15 +278,7 @@ int main(int /* argc */, char** /* argv */) {
     
     std::cout << std::endl;
     
-    // ========== 5. 初始化可视化 ==========
-    std::cout << "[主程序] 正在初始化可视化工具..." << std::endl;
-    Visualizer visualizer(50);  // 保留最近50帧的轨迹
-    
-    std::cout << std::endl;
-    
-    // ========== 6. 主循环 ==========
-    std::cout << "[主程序] 开始主循环..." << std::endl;
-    std::cout << "----------------------------------------" << std::endl;
+    // ========== 5. 主循环参数准备 ==========
     std::cout << "控制键：" << std::endl;
     std::cout << "  'q' - 退出程序" << std::endl;
     std::cout << "  'r' - 重置卡尔曼滤波器" << std::endl;
@@ -261,24 +303,42 @@ int main(int /* argc */, char** /* argv */) {
     ConfigReader viz_config(config_dir);
     viz_config.loadConfig("visualizer_params.yaml");
     
-    bool use_prediction_gating = selector_config.getBool("detector.selection.use_prediction_gating", true);
-    double gating_iou_min = selector_config.getDouble("detector.selection.gating_iou_min", 0.15);
-    double gating_center_max_px = selector_config.getDouble("detector.selection.gating_center_max_px", 60.0);
-    double weight_conf = selector_config.getDouble("detector.selection.weights.confidence", 0.6);
-    double weight_iou = selector_config.getDouble("detector.selection.weights.iou", 0.4);
-    double weight_ratio = selector_config.getDouble("detector.selection.weights.ratio", 0.2);
-    double armor_ratio_ref = selector_config.getDouble("detector.selection.armor_ratio_ref", 3.5);
+    // 初始化可视化工具
+    int trajectory_length = viz_config.getInt("visualizer.trajectory.max_length", 50);
+    Visualizer visualizer(trajectory_length);
+    std::cout << "[配置] 轨迹最大长度: " << trajectory_length << std::endl;
+    
+    // 加载装甲板选择策略参数（修正键名：去掉detector前缀）
+    bool use_prediction_gating = selector_config.getBool("selection.use_prediction_gating", true);
+    double gating_iou_min = selector_config.getDouble("selection.gating_iou_min", 0.15);
+    double gating_center_max_px = selector_config.getDouble("selection.gating_center_max_px", 60.0);
+    int relax_lost_frames = selector_config.getInt("selection.relax_lost_frames", 5);
+    double relax_iou_factor = selector_config.getDouble("selection.relax_iou_factor", 0.7);
+    double relax_distance_factor = selector_config.getDouble("selection.relax_distance_factor", 1.5);
+    double weight_conf = selector_config.getDouble("selection.weights.confidence", 0.6);
+    double weight_iou = selector_config.getDouble("selection.weights.iou", 0.4);
+    double weight_ratio = selector_config.getDouble("selection.weights.ratio", 0.2);
+    double armor_ratio_ref = selector_config.getDouble("selection.armor_ratio_ref", 3.5);
+    
+    std::cout << "[配置] 装甲板选择策略:" << std::endl;
+    std::cout << "  预测门控: " << (use_prediction_gating ? "启用" : "禁用") << std::endl;
+    std::cout << "  门控阈值: IoU≥" << gating_iou_min << " 或 距离≤" << gating_center_max_px << "px" << std::endl;
+    std::cout << "  门控放宽: 丢失≤" << relax_lost_frames << "帧时, IoU×" << relax_iou_factor 
+              << ", 距离×" << relax_distance_factor << std::endl;
     
     bool use_variable_dt = kalman_config.getBool("kalman.use_variable_dt", true);
     bool use_viz_smooth = viz_config.getBool("visualizer.smooth.enabled", true);
     double viz_ema_alpha = viz_config.getDouble("visualizer.smooth.ema_alpha", 0.35);
+    
+    // 获取Otsu ROI缩放参数（主循环中使用，键名保留detector前缀）
+    double otsu_roi_scale = detector_config.getDouble("detector.threshold.roi_scale", 1.8);
     
     // 可视化平滑状态
     cv::Point2f smoothed_center(0, 0);
     cv::Size2f smoothed_size(0, 0);
     bool smooth_initialized = false;
     
-    // 深度运动检测滞回状态
+    // 深度运动检测滞回状态（默认值与yaml一致）
     bool depth_enabled = viz_config.getBool("visualizer.depth.enabled", true);
     double depth_hysteresis_in = viz_config.getDouble("visualizer.depth.hysteresis.in", 0.06);
     double depth_hysteresis_out = viz_config.getDouble("visualizer.depth.hysteresis.out", 0.03);
@@ -367,9 +427,9 @@ int main(int /* argc */, char** /* argv */) {
                                           (center_dist <= gating_center_max_px);
                         
                         // 放宽门控（若正在丢失中）
-                        if (!pass_gating && lost_frames > 0 && lost_frames <= 5) {
-                            pass_gating = (iou >= gating_iou_min * 0.7) ||
-                                         (center_dist <= gating_center_max_px * 1.5);
+                        if (!pass_gating && lost_frames > 0 && lost_frames <= relax_lost_frames) {
+                            pass_gating = (iou >= gating_iou_min * relax_iou_factor) ||
+                                         (center_dist <= gating_center_max_px * relax_distance_factor);
                         }
                         
                         if (pass_gating) {
@@ -404,7 +464,7 @@ int main(int /* argc */, char** /* argv */) {
             PredictionResult pred_result;
             bool has_prediction = false;
             
-            if (best_armor.isValid() && best_armor.confidence > 0.3) {
+            if (best_armor.isValid() && best_armor.confidence > min_armor_confidence) {
                 // 提取当前装甲板的位置和尺寸
                 cv::Point2f pos = best_armor.center;
                 cv::Size2f size(best_armor.width, best_armor.height);
@@ -561,6 +621,20 @@ int main(int /* argc */, char** /* argv */) {
         // 显示图像
         cv::imshow("Armor Detection & Prediction", frame);
         
+        // 显示调试图像（如果调试模式开启）
+        if (debug_mode_runtime) {
+            cv::Mat debug_img = detector.getDebugImage();
+            if (!debug_img.empty()) {
+                cv::imshow("Debug - Light Bars", debug_img);
+            } else {
+                static bool warned = false;
+                if (!warned) {
+                    std::cout << "[警告] Debug图像为空，无法显示" << std::endl;
+                    warned = true;
+                }
+            }
+        }
+        
         // 键盘控制
         int key = cv::waitKey(1);
         if (key == 'q' || key == 27) {  // 'q' 或 ESC
@@ -576,10 +650,18 @@ int main(int /* argc */, char** /* argv */) {
             std::cout << "[主程序] 清空轨迹" << std::endl;
             visualizer.clearTrajectory();
         } else if (key == 'd') {  // 切换调试模式
-            bool debug = !detector_config.getBool("detector.debug_mode", false);
-            detector.setDebugMode(debug);
-            detector_config.loadConfig("detector_params.yaml");  // 重新加载配置
-            std::cout << "[主程序] 调试模式: " << (debug ? "开启" : "关闭") << std::endl;
+            debug_mode_runtime = !debug_mode_runtime;
+            detector.setDebugMode(debug_mode_runtime);
+            std::cout << "[主程序] 调试模式: " << (debug_mode_runtime ? "开启" : "关闭") << std::endl;
+            
+            // 如果关闭调试，尝试销毁窗口（捕获异常）
+            if (!debug_mode_runtime) {
+                try {
+                    cv::destroyWindow("Debug - Light Bars");
+                } catch (...) {
+                    // 忽略销毁窗口的错误
+                }
+            }
         } else if (key == ' ') {  // 暂停/继续
             paused = !paused;
             std::cout << "[主程序] " << (paused ? "暂停" : "继续") << std::endl;

@@ -29,17 +29,11 @@ kalman:
   adaptive:
     enabled: true
     fading_factor: 1.05                  # 渐消因子（1.0-1.2）
-    innovation_threshold: 50.0           # 新息阈值
     k_innovation_low: 2.0                # 创新量小阈值
     k_innovation_high: 8.0               # 创新量大阈值
     r_scale_low: 0.7                     # R缩小系数
     r_scale_high: 1.4                    # R放大系数
   
-  # 丢失与重获
-  max_lost_frames: 15                    # 最大丢失帧数
-  min_init_frames: 2                     # 最小初始化帧数
-  reacquire:
-    enabled: true
-    scales: [1.5, 2.0, 2.5]              # ROI逐步放大倍数
-    relax_gating: true                   # 丢失时放宽门限
+  # 丢失处理
+  max_lost_frames: 15                    # 最大丢失帧数（超过则重置滤波器）
 

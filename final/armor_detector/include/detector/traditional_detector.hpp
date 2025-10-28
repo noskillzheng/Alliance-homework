@@ -52,6 +52,24 @@ public:
     void setBinaryThreshold(int threshold) { binary_threshold_ = threshold; }
     
     /**
+     * @brief 设置亮度阈值（提取高亮灯条）
+     */
+    void setBrightnessThreshold(int threshold) { brightness_threshold_ = threshold; }
+    
+    /**
+     * @brief 启用/禁用亮度辅助过滤
+     */
+    void setUseBrightnessFilter(bool use) { use_brightness_filter_ = use; }
+    
+    /**
+     * @brief 设置形态学操作参数
+     */
+    void setMorphology(bool use, int kernel_size) { 
+        use_morphology_ = use;
+        morph_kernel_size_ = kernel_size;
+    }
+    
+    /**
      * @brief 设置Otsu参数
      */
     void setOtsuParams(bool use_otsu, const std::string& mode, double roi_scale,
@@ -71,11 +89,41 @@ public:
      * @brief 设置灯条面积阈值
      */
     void setMinLightArea(float min_area) { min_light_area_ = min_area; }
+    void setMaxLightArea(float max_area) { max_light_area_ = max_area; }
     
     /**
      * @brief 设置灯条长宽比阈值
      */
+    void setMinLightRatio(float min_ratio) { min_light_ratio_ = min_ratio; }
     void setMaxLightRatio(float max_ratio) { max_light_ratio_ = max_ratio; }
+    
+    /**
+     * @brief 设置灯条角度阈值
+     */
+    void setMaxLightAngle(float max_angle) { max_light_angle_ = max_angle; }
+    
+    /**
+     * @brief 设置装甲板匹配参数
+     */
+    void setArmorRatioRange(float min_ratio, float max_ratio) { 
+        min_armor_ratio_ = min_ratio; 
+        max_armor_ratio_ = max_ratio; 
+    }
+    void setMaxAngleDiff(float max_diff) { max_angle_diff_ = max_diff; }
+    void setMaxHeightDiffRatio(float max_ratio) { max_height_diff_ratio_ = max_ratio; }
+    void setMaxYDiffRatio(float max_ratio) { max_y_diff_ratio_ = max_ratio; }
+    void setMinAreaRatio(float min_ratio) { min_area_ratio_ = min_ratio; }
+    void setMaxTiltForDirection(float max_tilt) { max_tilt_for_direction_ = max_tilt; }
+    
+    /**
+     * @brief 设置灯条质量过滤参数
+     */
+    void setLightQualityParams(float min_fill, float max_fill, float max_area, float min_compact) {
+        min_fill_ratio_ = min_fill;
+        max_fill_ratio_ = max_fill;
+        max_fill_area_ = max_area;
+        min_compactness_ = min_compact;
+    }
     
     /**
      * @brief 获取调试图像（用于可视化中间步骤）
@@ -116,8 +164,13 @@ private:
     
     /**
      * @brief 判断灯条是否有效
+     * @param bar 灯条信息
+     * @param binary 二值化图像（用于占比检查）
+     * @param contour 轮廓点集（用于填充率计算）
+     * @return 是否为有效灯条
      */
-    bool isValidLightBar(const LightBar& bar);
+    bool isValidLightBar(const LightBar& bar, const cv::Mat& binary, 
+                         const std::vector<cv::Point>& contour);
     
     /**
      * @brief 判断两个灯条是否能配对成装甲板
@@ -141,7 +194,11 @@ private:
     cv::Scalar hsv_high_;           // HSV上限
     cv::Scalar hsv_low2_;           // HSV下限2（红色环绕）
     cv::Scalar hsv_high2_;          // HSV上限2（红色环绕）
-    int binary_threshold_;          // 通道分离法的二值化阈值
+    int binary_threshold_;          // 通道分离法的颜色差异阈值
+    int brightness_threshold_;      // 亮度阈值（提取高亮灯条）
+    bool use_brightness_filter_;    // 启用亮度辅助过滤
+    bool use_morphology_;           // 启用形态学操作
+    int morph_kernel_size_;         // 形态学操作核大小
     
     // Otsu自适应阈值参数
     bool use_otsu_;                 // 是否使用Otsu
@@ -154,14 +211,27 @@ private:
     cv::Rect prediction_roi_;       // 预测ROI
     bool has_prediction_roi_;       // 是否有预测ROI
     
-    // 检测参数
+    // 检测参数 - 灯条
     float min_light_area_;          // 灯条最小面积
+    float max_light_area_;          // 灯条最大面积
+    float min_light_ratio_;         // 灯条最小长宽比
     float max_light_ratio_;         // 灯条最大长宽比
+    float max_light_angle_;         // 灯条最大角度偏差
+    
+    // 检测参数 - 装甲板匹配
     float min_armor_ratio_;         // 装甲板最小宽高比
     float max_armor_ratio_;         // 装甲板最大宽高比
     float max_angle_diff_;          // 两灯条最大角度差
     float max_height_diff_ratio_;   // 两灯条高度差比例
     float max_y_diff_ratio_;        // 两灯条Y坐标差比例
+    float min_area_ratio_;          // 两灯条最小面积比
+    float max_tilt_for_direction_;  // 倾斜方向检查的角度阈值
+    
+    // 检测参数 - 灯条质量过滤
+    float min_fill_ratio_;          // 最小填充率
+    float max_fill_ratio_;          // 最大填充率
+    float max_fill_area_;           // 高填充率时的最大面积
+    float min_compactness_;         // 最小紧凑性
     
     // 调试
     bool debug_mode_;               // 调试模式

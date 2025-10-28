@@ -1,5 +1,9 @@
 # 可视化参数配置
 visualizer:
+  # 轨迹设置
+  trajectory:
+    max_length: 50                       # 保留的最大轨迹点数
+  
   # 输出平滑（仅影响显示）
   smooth:
     enabled: true
@@ -12,10 +16,4 @@ visualizer:
       in: 0.06                           # 接近滞回阈值
       out: 0.03                          # 远离滞回阈值
     hold_time: 0.2                       # 状态切换保持时间（秒）
-  
-  # 性能优化
-  performance:
-    limit_text_fps: true                 # 限制文字叠加频率
-    text_fps: 15                         # 文字更新频率
-    disable_debug_in_release: true       # 发布模式禁用调试绘制
 

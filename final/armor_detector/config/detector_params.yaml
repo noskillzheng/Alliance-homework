@@ -3,11 +3,15 @@ detector:
   # 颜色设置
   target_color: "red"                    # red 或 blue
   color_method: "channel_separation"     # channel_separation 或 hsv
-  binary_threshold: 80                   # 二值化阈值（60-110）
+  binary_threshold: 50                   # 颜色差异二值化阈值（降低以更好检测白色）
+  brightness_threshold: 150              # 亮度二值化阈值（提取高亮灯条，降低以检测更多）
+  use_brightness_filter: true            # 启用亮度辅助过滤（适用于高亮LED）
+  use_morphology: true                   # 启用形态学操作（去噪和填充）
+  morph_kernel_size: 1                  # 形态学操作核大小（1/3/5，设为1可减少膨胀）
   
   # Otsu自适应阈值（v2.0+）
   threshold:
-    use_otsu: true                       # 启用Otsu自适应
+    use_otsu: true                         # 启用Otsu自适应
     mode: "roi"                          # global/roi/hybrid
     roi_scale: 1.8                       # ROI放大倍数
     min_threshold: 40                    # 最小阈值保护
@@ -19,6 +23,10 @@ detector:
     use_prediction_gating: true          # 启用预测门控
     gating_iou_min: 0.15                 # IoU最小阈值
     gating_center_max_px: 60             # 中心距离最大值（像素）
+    # 门控放宽参数（丢失帧时）
+    relax_lost_frames: 5                 # 丢失帧数阈值（小于此值时放宽门控）
+    relax_iou_factor: 0.7                # IoU放宽系数（0.7表示降低到原值的70%）
+    relax_distance_factor: 1.5           # 距离放宽系数（1.5表示放宽到1.5倍）
     weights:
       confidence: 0.6                    # 置信度权重
       iou: 0.4                           # IoU权重
@@ -27,20 +35,29 @@ detector:
   
   # 灯条检测参数
   light:
-    min_area: 30.0                       # 最小面积
-    max_area: 5000.0                     # 最大面积
-    min_aspect_ratio: 1.5                # 最小长宽比
-    max_aspect_ratio: 8.0                # 最大长宽比
-    max_angle: 40.0                      # 最大倾斜角度（度）
+    min_area: 50.0                       # 最小面积（过滤小噪点）
+    max_area: 999999.0                   # 最大面积（已取消限制，适应近距离大灯条）
+    min_aspect_ratio: 2.0                # 最小长宽比（灯条应细长）
+    max_aspect_ratio: 10.0                # 最大长宽比
+    max_angle: 15.0                      # 最大倾斜角度（严格要求竖直，±15度内）
   
   # 装甲板匹配参数
   armor:
-    min_ratio: 1.0                       # 最小宽高比
-    max_ratio: 5.0                       # 最大宽高比
-    max_angle_diff: 20.0                 # 两灯条最大角度差（度）
-    max_height_diff_ratio: 0.5           # 高度差比例
-    max_y_diff_ratio: 1.5                # Y坐标差比例
-    min_area_ratio: 0.3                  # 最小面积比
+    min_ratio: 2.0                       # 最小宽高比（正常装甲板比例）
+    max_ratio: 4.5                       # 最大宽高比
+    max_angle_diff: 15.0                 # 两灯条最大角度差（度）
+    max_height_diff_ratio: 0.3           # 高度差比例（更严格）
+    max_y_diff_ratio: 0.8                # Y坐标差比例（防止错位配对）
+    min_area_ratio: 0.3                  # 最小面积比（两灯条面积相似度）
+    min_confidence: 0.3                  # 最小置信度（低于此值不进行跟踪）
+    max_tilt_for_direction_check: 5.0    # 倾斜方向检查的角度阈值
+  
+  # 灯条质量检测参数（精细过滤）
+  light_quality:
+    min_fill_ratio: 0.25                 # 最小填充率（过滤稀疏噪点）
+    max_fill_ratio: 0.95                 # 最大填充率（配合面积过滤大块反光）
+    max_fill_area: 800                   # 高填充率时的最大面积
+    min_compactness: 0.2                 # 最小紧凑性（轮廓/外接矩形面积比）
   
   # HSV阈值（仅当color_method=hsv时使用）
   hsv:
@@ -68,5 +85,5 @@ detector:
       v_high: 255
   
   # 调试
-  debug_mode: false
+  debug_mode: true
 
