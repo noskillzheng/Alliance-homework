@@ -18,7 +18,6 @@ ros2_ws/src文件下：
 
 协议：Apache-2.0
 
-在source 的时候选择的是local_setup.sh,其他的编译不通过。
 
 
 
